@@ -8,6 +8,7 @@ require 'rspec'
 require 'debugger'
 require 'bundler'
 require 'simplecov'
+require 'pry'
 
 Debugger.start
 Bundler.setup
@@ -36,4 +37,5 @@ RSpec.configure do |config|
   config.order = 'random' unless ENV['RANDOMIZE'] == 'false'
 
   config.include Support::Helpers
+  config.include RepresentorSupport::Utilities
 end

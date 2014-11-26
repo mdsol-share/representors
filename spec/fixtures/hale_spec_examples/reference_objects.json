@@ -1,0 +1,89 @@
+{
+    "_meta": {
+        "lookup": {
+            "send_info": {
+                "options": [
+                    "yes",
+                    "no",
+                    "maybe"
+                ],
+                "in": true
+            }
+        },
+        "edit_form": {
+            "_ref": [
+                {
+                    "href": "/edit_form/1",
+                    "method": "GET",
+                    "type": "application/json"
+                }
+            ]
+        }
+    },
+    "_links": {
+        "self": {
+            "href": "..."
+        },
+        "search": {
+            "href": ".../{?send_info}",
+            "templated": true,
+            "method": "GET",
+            "data": {
+                "_ref": [
+                    "lookup"
+                ]
+            }
+        },
+        "agent": {
+            "href": "/agent/1",
+            "method": "GET",
+            "render": "embed"
+        },
+        "customer": [
+            {
+                "href": "/customer/1",
+                "method": "GET"
+            },
+            {
+                "href": "/customer/2",
+                "method": "GET"
+            }
+        ]
+    },
+    "_embedded": {
+        "customer": [
+            {
+                "_links": {
+                    "self": {
+                        "href": "/customer/1",
+                        "method": "GET"
+                    },
+                    "edit": {
+                        "href": ".../{?user_id}",
+                        "_ref": [
+                            "edit_form"
+                        ]
+                    }
+                },
+                "name": "Tom",
+                "send_info": "yes"
+            },
+            {
+                "_links": {
+                    "self": {
+                        "href": "/customer/2",
+                        "method": "GET"
+                    },
+                    "edit": {
+                        "href": ".../{?user_id}",
+                        "_ref": [
+                            "edit_form"
+                        ]
+                    }
+                },
+                "name": "Harry",
+                "send_info": "no"
+            }
+        ]
+    }
+}

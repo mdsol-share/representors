@@ -1,0 +1,43 @@
+{
+    "_meta": {
+        "data": {
+            "options": [
+                0,
+                1,
+                2
+            ],
+            "value": 0
+        },
+        "data1": {
+            "_ref": [
+                "data"
+            ],
+            "value": 1
+        },
+        "something": {
+            "max": 1,
+            "value": 2
+        },
+        "something_else": {
+            "_ref": [
+                "data1",
+                "something"
+            ]
+        }
+    },
+    "_embedded": {
+        "item": {
+            "_meta": {
+                "embedded_something": {
+                    "_ref": [
+                        "something_else"
+                    ]
+                }
+            },
+            "_links": {
+                "self":  { "href": "/thing/1", "method": "GET" }
+            }
+
+        }
+    }
+}

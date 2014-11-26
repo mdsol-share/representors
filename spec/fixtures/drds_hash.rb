@@ -2,6 +2,7 @@ module ComplexRepresentor
 DRDS_HASH = {
   href: 'www.example.com/drds',
   id: 'DRDs',
+  protocol: 'http',
   doc: 'Describes the semantics, states and state transitions associated with DRDs.', 
   links: {
     profile: 'http://www.example.com/drds/show/DRDs',

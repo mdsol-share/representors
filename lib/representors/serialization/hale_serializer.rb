@@ -74,7 +74,13 @@ module Representors
       end
 
       def get_data_element(element)
-        options = element.options.datalist? ? { '_ref' => [element.options.id] } : element.options.to_data
+        options = if element.options.datalist?
+          { '_ref' => [element.options.id] }
+        elsif element.options.type == Representors::Options::HASH_TYPE
+          element.options.to_hash.map { |option| Hash[*option] }
+        else
+          element.options.to_list
+        end
         element_data = get_data_validators(element)
         elementals = get_data_properties(element)
         elementals[:options] = options unless options.empty?
@@ -92,7 +98,7 @@ module Representors
         # below add fields specific for Hale
         data_elements = render_data_elements(transition.descriptors)
         link[:data] = data_elements unless data_elements.empty?
-        link[:method] = transition.interface_method unless transition.interface_method == "GET"
+        link[:method] = transition.interface_method unless transition.interface_method == Transition::DEFAULT_METHOD
         link
       end
       

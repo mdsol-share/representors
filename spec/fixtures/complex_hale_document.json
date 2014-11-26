@@ -21,7 +21,7 @@
       "templated": true,
       "method": "GET",
       "data": { 
-        "send_info": { "options": [ "yes", "no", "maybe" ], "in": true }
+        "send_info": { "scope": "href", "options": [ "yes", "no", "maybe" ], "in": true, "max_length": 40 }
       }
     },
     "agent": { "href": "/agent/1", "method": "GET", "render": "embed" },
@@ -45,10 +45,11 @@
             "href": ".../{?user_id}",
             "method": "PUT",
             "enctype": "application/json",
+            "templated": true,
             "render": "resource",
             "data": {
               "name": { "type": "string", "required": true, "value": "Tom" },
-              "send_info": { "options": [ "yes", "no", "maybe" ], "in": true, "value": "yes" },
+              "send_info": { "options": [ "yes", "no", "maybe" ], "in": true, "value": "yes", "max_length": 40 },
               "user_id": { "scope": "href", "required": true }
             }
           }
@@ -64,6 +65,7 @@
             "method": "PUT",
             "enctype": "application/json",
             "render": "resource",
+            "templated": true,
             "data": {
               "name": { "type": "string", "required": true, "value": "Harry" },
               "send_info": { "options": [ "yes", "no", "maybe" ], "in": true, "value": "no" },

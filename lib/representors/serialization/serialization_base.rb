@@ -1,5 +1,9 @@
+require 'representor_support/utilities'
+
 module Representors
   class SerializationBase
+    include RepresentorSupport::Utilities
+
     attr_reader :target
 
     def initialize(target)

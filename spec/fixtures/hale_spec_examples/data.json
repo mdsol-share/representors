@@ -1,0 +1,17 @@
+{
+    "_links": {
+        "search": {
+            "href": ".../{?state}",
+            "data": {
+                "state": {
+                    "options": [
+                        "AL",
+                        "...",
+                        "WY"
+                    ],
+                    "in": true
+                }
+            }
+        }
+    }
+}

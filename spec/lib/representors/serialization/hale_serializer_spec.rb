@@ -19,7 +19,7 @@ module Representors
     let(:result) {JSON.parse(serializer.to_media_type(@options))}
 
     shared_examples "a hale documents attributes" do |representor_hash, media|
-      let(:document) { representor_hash.merge(@base_representor) }
+      let(:document) { RepresentorHash.new(representor_hash).merge(@base_representor) }
 
       representor_hash[:attributes].each do |k, v|
         it "includes the document attribute #{k} and associated value" do
@@ -30,10 +30,17 @@ module Representors
 
     shared_examples "a hale documents links" do |representor_hash, media|
       let(:document) { representor_hash.merge(@base_representor) }
-      
-      Representor.new(representor_hash).transitions.each do |item|
+      representor = Representor.new(representor_hash)
+
+      representor.transitions.each do |item|
         it "includes the document transition #{item}" do
           expect(result["_links"][item[:rel]]['href']).to eq(item.templated_uri)
+        end
+      end
+
+      representor.meta_links.each do |transition|
+        it "includes meta link #{transition}" do
+          expect(result["_links"][transition.rel.to_s]['href']).to eq(transition.templated_uri)
         end
       end
     end
@@ -261,12 +268,12 @@ module Representors
           expect(link_data["size"]["type"]).to eq("integer:number")
           expect(link_data["size"]["in"]).to eq(true)
           expect(link_data["size"]["required"]).to eq(true)
-          expect(link_data["size"]["options"]).to eq({
-                            "small" => 8,
-                            "medium" => 12,
-                            "large" => 16,
-                            "extra-large" => 20
-                    })          
+          expect(link_data["size"]["options"]).to eq([
+                            {"small" => 8},
+                            {"medium" => 12},
+                            {"large" => 16},
+                            {"extra-large" => 20}
+                    ])
           
           expect(link_data["shots"]["type"]).to eq("integer:range")
           expect(link_data["shots"]["min"]).to eq(0)
@@ -450,6 +457,20 @@ module Representors
           }
         end
 
+        let(:embedded_transitions) { {transitions: [
+              {:href=>"www.example.com/coffeebucks/1", :rel=>"order_list"},
+              {:href=>"www.example.com/coffeebucks/2", :rel=>"order_list"},
+              {:href=>"www.example.com/coffeebucks/3", :rel=>"order_list"}
+            ]
+          } 
+        }
+
+        it 'does not add embedded links if they already exist' do
+          representor = Representor.new(representor_hash.merge(@base_representor).merge(embedded_transitions))
+          serialized_hale = JSON.parse(Serialization::HaleSerializer.new(representor).to_media_type)
+          expect(serialized_hale["_links"]["order_list"].count).to eq(3)
+        end
+
         it_behaves_like 'a hale documents embedded collection', representor_hash, @options
       end
 
@@ -556,12 +577,12 @@ module Representors
           expect(link_data["size"]["type"]).to eq("integer:number")
           expect(link_data["size"]["in"]).to eq(true)
           expect(link_data["size"]["required"]).to eq(true)
-          expect(link_data["size"]["options"]).to eq({
-                            "small" => 8,
-                            "medium" => 12,
-                            "large" => 16,
-                            "extra-large" => 20
-                    })          
+          expect(link_data["size"]["options"]).to eq([
+                            {"small" => 8},
+                            {"medium" => 12},
+                            {"large" => 16},
+                            {"extra-large" => 20}
+                    ])
         
           expect(link_data["shots"]["type"]).to eq("integer:range")
           expect(link_data["shots"]["min"]).to eq(0)

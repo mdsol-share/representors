@@ -1,0 +1,17 @@
+{
+    "_links": {
+        "self": {
+            "href": "www.example.com/coffeebucks/"
+        },
+        "profile": {
+            "href": "profiles.example.com/coffeebucks/",
+            "enctype": [
+                "application/alps+xml",
+                "text/html"
+            ]
+        },
+        "orders": {
+            "href": "www.example.com/coffeebucks"
+        }
+    }
+}

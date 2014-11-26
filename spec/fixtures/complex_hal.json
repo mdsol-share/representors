@@ -17,7 +17,8 @@
         },
         "items": [
             {
-                "href": "www.example.com/drds/show/173875983789"
+                "href": "www.example.com/drds/show/173875983789",
+                "profile": "http://alps.io/schema.org/DRD"
             }
         ],
         "profile": {

@@ -38,7 +38,7 @@ module Representors
       end
     end
 
-    shared_examples 'a hal documents ebedded hal documents' do |representor_hash|
+    shared_examples 'a hal documents embedded hal documents' do |representor_hash|
       let(:document) { representor_hash.merge(base_representor) }
 
       representor_hash[:embedded].each do |embed_name, embed|
@@ -55,7 +55,7 @@ module Representors
       end
     end
 
-    shared_examples 'a hal documents ebedded collection' do |representor_hash|
+    shared_examples 'a hal documents embedded collection' do |representor_hash|
       let(:document) { representor_hash.merge(base_representor) }
 
       representor_hash[:embedded].each do |embed_name, embeds|
@@ -137,7 +137,7 @@ module Representors
 
         it_behaves_like 'a hal documents attributes', representor_hash
         it_behaves_like 'a hal documents links', representor_hash
-        it_behaves_like 'a hal documents ebedded hal documents', representor_hash
+        it_behaves_like 'a hal documents embedded hal documents', representor_hash
       end
 
       context 'Document with an embedded collection' do
@@ -164,7 +164,7 @@ module Representors
 
         it_behaves_like 'a hal documents attributes', representor_hash
         it_behaves_like 'a hal documents links', representor_hash
-        it_behaves_like 'a hal documents ebedded collection', representor_hash
+        it_behaves_like 'a hal documents embedded collection', representor_hash
       end
     end
   end

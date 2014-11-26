@@ -1,0 +1,18 @@
+{
+    "_meta": {
+        "monster": {
+            "demeanor": "scary"
+        },
+        "explosion": {
+            "occupation": "swamp thing",
+            "_ref": [
+                {
+                    "href": "/human/1",
+                    "method": "GET",
+                    "type": "application/json"
+                },
+                "monster"
+            ]
+        }
+    }
+}

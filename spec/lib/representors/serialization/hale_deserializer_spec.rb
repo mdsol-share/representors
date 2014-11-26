@@ -34,19 +34,21 @@ module Representors
               'any' => { 'json' => 'thing'}
             }
           }
+        end
+        let(:semantics_field) {deserializer.to_representor.properties}
+        let(:transitions_field) {deserializer.to_representor.transitions}
+        let(:embedded_field) {deserializer.to_representor.embedded }
 
-          it 'return a hash with all the attributes of the document' do
-            expect(semantics_field).to eq(semantics)
-          end
-          it 'Create a transition with the link' do
-            expect(transitions_field.size).to eq(1)
-            expect(transitions_field.first.rel).to eq(transition_rel)
-            expect(transitions_field.first.uri).to eq(transition_href)
-          end
-          it 'does not return any embedded resource' do
-            expect(embedded_field).to be_empty
-          end
-
+        it 'return a hash with all the attributes of the document' do
+          expect(semantics_field).to eq(semantics)
+        end
+        it 'Create a transition with the link' do
+          expect(transitions_field.size).to eq(1)
+          expect(transitions_field.first.rel).to eq(transition_rel)
+          expect(transitions_field.first.uri).to eq(transition_href)
+        end
+        it 'does not return any embedded resource' do
+          expect(embedded_field).to be_empty
         end
 
       end

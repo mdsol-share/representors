@@ -3,7 +3,7 @@ require 'spec_helper'
 
 RSpec.shared_examples_for 'one attribute added' do
   it 'creates a semantic key at the top level of the output' do
-    expect(builder.to_representor_hash.attributes).to_not be_empty
+    expect(@builder.to_representor_hash.attributes).to_not be_empty
   end
 
   it 'adds the attribute name as a key under "semantic" in the output hash' do
@@ -16,7 +16,7 @@ RSpec.shared_examples_for 'one attribute added' do
 
   it 'when called twice the value is overwritten' do
     new_value = 'new_value'
-    builder.add_attribute(attribute_name, new_value)
+    @builder = @builder.add_attribute(attribute_name, new_value)
     expect(semantic_field[attribute_name]).to eq({value: new_value})
   end
 end
@@ -24,7 +24,7 @@ end
 
 RSpec.shared_examples_for 'one transition added' do
   it 'creates a transition key at the top level of the output' do
-    expect(builder.to_representor_hash.transitions).to_not be_empty
+    expect(@builder.to_representor_hash.transitions).to_not be_empty
   end
 
   it 'adds an array under "transitions" ' do
@@ -41,7 +41,7 @@ end
 
 RSpec.shared_examples_for 'one embedded added' do
   it 'creates a transition key at the top level of the output' do
-    expect(builder.to_representor_hash.embedded).to_not be_empty
+    expect(@builder.to_representor_hash.embedded).to_not be_empty
   end
 
   it 'adds a hash under "embedded" ' do
@@ -57,21 +57,24 @@ end
 RSpec.shared_examples_for 'it can reconstruct itself' do
   it 'can be constructed with the hash' do
     expect(
-      Representors::RepresentorBuilder.new(builder.to_representor_hash).to_representor_hash
-    ).to eq(builder.to_representor_hash)
+      Representors::RepresentorBuilder.new(@builder.to_representor_hash).to_representor_hash
+    ).to eq(@builder.to_representor_hash)
   end
 end
 
 RSpec.describe Representors::RepresentorBuilder do
-  subject(:builder) {Representors::RepresentorBuilder.new}
-  let(:semantic_field) {builder.to_representor_hash.attributes}
-  let(:transitions_field) {builder.to_representor_hash.transitions}
-  let(:embedded_field) {builder.to_representor_hash.embedded}
+  let(:semantic_field) {@builder.to_representor_hash.attributes}
+  let(:transitions_field) {@builder.to_representor_hash.transitions}
+  let(:embedded_field) {@builder.to_representor_hash.embedded}
+
+  before do
+    @builder = Representors::RepresentorBuilder.new
+  end
 
   context 'empty builder' do
-    it "returns an empty hash" do
-      empty_hash = {}
-      expect(builder.to_representor_hash.to_h).to eq(empty_hash)
+    it "returns an empty representor hash" do
+      empty_hash = {:id=>nil, :doc=>nil, :href=>nil, :protocol=>nil, :attributes=>{}, :embedded=>{}, :links=>{}, :transitions=>[]}
+      expect(@builder.to_representor_hash.to_h).to eq(empty_hash)
     end
   end
 
@@ -81,15 +84,15 @@ RSpec.describe Representors::RepresentorBuilder do
 
     context 'Added an attribute without extra options' do
       before do
-        builder.add_attribute(attribute_name, attribute_value)
+        @builder = @builder.add_attribute(attribute_name, attribute_value)
       end
 
       it_behaves_like 'one attribute added'
     end
 
-    context 'Added an attribute with nil extra options' do
+    context 'Added an attribute with no specified extra options' do
       before do
-        builder.add_attribute(attribute_name, attribute_value, nil)
+        @builder = @builder.add_attribute(attribute_name, attribute_value)
       end
 
       it_behaves_like 'one attribute added'
@@ -97,7 +100,7 @@ RSpec.describe Representors::RepresentorBuilder do
 
     context 'Added an attribute with empty extra options' do
       before do
-        builder.add_attribute(attribute_name, attribute_value, {})
+        @builder = @builder.add_attribute(attribute_name, attribute_value, {})
       end
 
       it_behaves_like 'one attribute added'
@@ -109,7 +112,7 @@ RSpec.describe Representors::RepresentorBuilder do
       let(:extra_options) { {extra_key => extra_value} }
 
       before do
-        builder.add_attribute(attribute_name, attribute_value, extra_options)
+        @builder = @builder.add_attribute(attribute_name, attribute_value, extra_options)
       end
 
       it_behaves_like 'one attribute added'
@@ -133,7 +136,7 @@ RSpec.describe Representors::RepresentorBuilder do
 
     context 'Added a transition without extra options' do
       before do
-        builder.add_transition(transition_name, transition_href)
+        @builder = @builder.add_transition(transition_name, transition_href)
       end
 
       it_behaves_like 'one transition added'
@@ -142,12 +145,12 @@ RSpec.describe Representors::RepresentorBuilder do
     end
 
     context 'Added a transition with extra options' do
-      let(:extra_key) {'doc'}
+      let(:extra_key) {:doc}
       let(:extra_value) {'Some documentation'}
       let(:extra_options) { {extra_key => extra_value} }
 
       before do
-        builder.add_transition(transition_name, transition_href, extra_options)
+        @builder = @builder.add_transition(transition_name, transition_href, extra_options)
       end
 
       it_behaves_like 'one transition added'
@@ -167,10 +170,10 @@ RSpec.describe Representors::RepresentorBuilder do
   describe '#add_transition_array' do
     let(:transition_name) {'mumismo'}
     let(:transition_href) {'/path_to_there'}
-    let(:transition_array) { [{hello: 'world', 'href' => transition_href}, {count: 10}]}
+    let(:transition_array) { [{hello: 'world', :href => transition_href}, {count: 10, href: '/another_path'}]}
 
     before do
-      builder.add_transition_array(transition_name, transition_array)
+      @builder = @builder.add_transition_array(transition_name, transition_array)
     end
 
     it 'creates two elements under transitions' do
@@ -189,7 +192,7 @@ RSpec.describe Representors::RepresentorBuilder do
 
     context 'Added an embedded' do
       before do
-        builder.add_embedded(embedded_name, embedded_value)
+        @builder = @builder.add_embedded(embedded_name, embedded_value)
       end
 
       it_behaves_like 'one embedded added'
@@ -205,8 +208,8 @@ RSpec.describe Representors::RepresentorBuilder do
         href: 'www.example.com/drds', # Crichton needs to say where we are
         id: 'DRDs', # ID from desrciptor
         doc: 'Describes the semantics, states and state transitions associated with DRDs.'
-        }) do |builder| 
-          builder.add_attribute('total_count', 2, { #semantic key
+        }) do |builder|
+          builder = builder.add_attribute('total_count', 2, { #semantic key
             doc: 'The total count of DRDs.', # Descriptor semantic doc
             type: 'semantic', # Descriptor semantic type
             profile: 'http://alps.io/schema.org/Integer', # same as 'href' in Descriptor file

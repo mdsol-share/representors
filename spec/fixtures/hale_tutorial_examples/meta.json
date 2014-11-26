@@ -1,0 +1,208 @@
+{
+    "_meta": {
+        "order_properties": {
+            "drink_type": {
+                "options": [
+                    "coffee",
+                    "americano",
+                    "latte",
+                    "mocha",
+                    "cappuccino",
+                    "macchiato",
+                    "espresso"
+                ],
+                "in": true,
+                "required": true
+            },
+            "iced": {
+                "type": "boolean",
+                "value": false
+            },
+            "size": {
+                "type": "integer:number",
+                "options": [
+                    {
+                        "small": 8
+                    },
+                    {
+                        "medium": 12
+                    },
+                    {
+                        "large": 16
+                    },
+                    {
+                        "extra-large": 20
+                    }
+                ],
+                "in": true,
+                "required": true
+            },
+            "shots": {
+                "type": "integer:range",
+                "min": 0,
+                "max": 16
+            },
+            "decaf": {
+                "type": "integer:range",
+                "min": 0,
+                "max": 16,
+                "lte": {
+                    "profile": "profiles.example.com/lte/",
+                    "attribute": "shots"
+                }
+            }
+        }
+    },
+    "_links": {
+        "self": {
+            "href": "www.example.com/coffeebucks/"
+        },
+        "profile": {
+            "href": "profiles.example.com/coffeebucks/",
+            "enctype": [
+                "application/alps+xml",
+                "text/html"
+            ]
+        },
+        "orders": {
+            "href": "www.example.com/coffeebucks{?order_status,page}",
+            "data": {
+                "order_status": {
+                    "scope": "href",
+                    "options": [
+                        "pending_payment",
+                        "preparing",
+                        "fulfilled"
+                    ],
+                    "in": true,
+                    "multi": true
+                },
+                "page": {
+                    "type": "integer",
+                    "min": 1,
+                    "max": 2,
+                    "value": 1
+                }
+            }
+        },
+        "next": {
+            "href": "www.example.com/coffeebucks?page=2"
+        },
+        "place_order": {
+            "href": "www.example.com/coffeebucks/orders",
+            "method": "POST",
+            "data": {
+                "_ref": [
+                    "order_properties"
+                ]
+            },
+            "multi_order": {
+                "href": "www.example.com/coffeebucks/orders",
+                "request_encoding": "application/json",
+                "method": "POST",
+                "data": {
+                    "multi_order": {
+                        "value": true
+                    },
+                    "orders": {
+                        "type": "object",
+                        "multi": "true",
+                        "data": {
+                            "_ref": [
+                                "order_properties"
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "order_list": [
+            {
+                "href": "www.example.com/coffeebucks/1"
+            },
+            {
+                "href": "www.example.com/coffeebucks/2"
+            },
+            {
+                "href": "www.example.com/coffeebucks/3"
+            }
+        ]
+    },
+    "_embedded": {
+        "order_list": [
+            {
+                "_links": {
+                    "self": {
+                        "href": "www.example.com/coffeebucks/1"
+                    },
+                    "fulfill": {
+                        "href": "www.example.com/coffeebucks/1",
+                        "method": "PUT",
+                        "data": {
+                            "status": {
+                                "value": "fulfilled",
+                                "required": true
+                            }
+                        }
+                    }
+                },
+                "status": "preparing",
+                "created": 12569537329,
+                "drink_type": "latte",
+                "iced": "true",
+                "size": 8,
+                "shots": 2,
+                "decaf": 1
+            },
+            {
+                "_links": {
+                    "self": {
+                        "href": "www.example.com/coffeebucks/2"
+                    }
+                },
+                "status": "fulfilled",
+                "created": 12569537312,
+                "drink_type": "latte",
+                "iced": "true",
+                "size": 8,
+                "shots": 2,
+                "decaf": 1
+            },
+            {
+                "_links": {
+                    "self": {
+                        "href": "www.example.com/coffeebucks/3"
+                    },
+                    "prepare": {
+                        "href": "www.example.com/coffeebucks/1",
+                        "method": "PUT",
+                        "data": {
+                            "status": {
+                                "value": "preparing",
+                                "required": true
+                            },
+                            "paid": {
+                                "value": 495,
+                                "required": true
+                            }
+                        }
+                    },
+                    "cancel": {
+                        "href": "www.example.com/coffeebucks/3",
+                        "method": "DELETE"
+                    }
+                },
+                "status": "pending_payment",
+                "created": 12569534536,
+                "drink_type": "latte",
+                "iced": "true",
+                "size": 8,
+                "shots": 2,
+                "decaf": 1,
+                "cost": 495
+            }
+        ]
+    },
+    "count": 3,
+    "total_count": 6
+}

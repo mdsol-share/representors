@@ -1,0 +1,85 @@
+{
+    "_links": {
+        "self": {
+            "href": "www.example.com/coffeebucks/"
+        },
+        "profile": {
+            "href": "profiles.example.com/coffeebucks/",
+            "enctype": [
+                "application/alps+xml",
+                "text/html"
+            ]
+        },
+        "orders": {
+            "href": "www.example.com/coffeebucks{?order_status}",
+            "data": {
+                "order_status": {
+                    "scope": "href",
+                    "options": [
+                        "pending_payment",
+                        "preparing",
+                        "fulfilled"
+                    ],
+                    "in": true,
+                    "multi": true
+                }
+            }
+        },
+        "place_order": {
+            "href": "www.example.com/coffeebucks/orders",
+            "method": "POST",
+            "data": {
+                "drink_type": {
+                    "options": [
+                        "coffee",
+                        "americano",
+                        "latte",
+                        "mocha",
+                        "cappuccino",
+                        "macchiato",
+                        "espresso"
+                    ],
+                    "in": true,
+                    "required": true
+                },
+                "iced": {
+                    "type": "boolean",
+                    "value": false
+                },
+                "size": {
+                    "type": "integer:number",
+                    "options": [
+                        {
+                            "small": 8
+                        },
+                        {
+                            "medium": 12
+                        },
+                        {
+                            "large": 16
+                        },
+                        {
+                            "extra-large": 20
+                        }
+                    ],
+                    "in": true,
+                    "required": true
+                },
+                "shots": {
+                    "type": "integer:range",
+                    "min": 0,
+                    "max": 16
+                },
+                "decaf": {
+                    "type": "integer:range",
+                    "min": 0,
+                    "max": 16,
+                    "lte": {
+                        "profile": "profiles.example.com/lte/",
+                        "attribute": "shots"
+                    }
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,77 @@
+{
+    "_meta": {
+        "any": {
+            "json": "object"
+        }
+    },
+    "_links": {
+        "self": {
+            "href": "..."
+        },
+        "search": {
+            "href": ".../{?send_info}",
+            "templated": true,
+            "method": "GET",
+            "data": {
+                "send_info": {
+                    "options": [
+                        "yes",
+                        "no",
+                        "maybe"
+                    ],
+                    "in": true
+                }
+            }
+        },
+        "agent": {
+            "href": "/agent/1",
+            "method": "GET",
+            "render": "embed"
+        },
+        "customer": [
+            {
+                "href": "/customer/1",
+                "method": "GET"
+            }
+        ]
+    },
+    "_embedded": {
+        "customer": [
+            {
+                "_links": {
+                    "self": {
+                        "href": "/customer/1",
+                        "method": "GET"
+                    },
+                    "edit": {
+                        "href": ".../{?user_id}",
+                        "method": "PUT",
+                        "request_encoding": "application/json",
+                        "render": "resource",
+                        "data": {
+                            "name": {
+                                "type": "string",
+                                "required": true
+                            },
+                            "send_info": {
+                                "options": [
+                                    "yes",
+                                    "no",
+                                    "maybe"
+                                ],
+                                "in": true
+                            },
+                            "user_id": {
+                                "scope": "href",
+                                "required": true
+                            }
+                        }
+                    }
+                },
+                "name": "Tom",
+                "send_info": "yes"
+            }
+        ]
+    }
+}
+

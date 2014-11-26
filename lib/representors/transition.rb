@@ -13,10 +13,9 @@ module Representors
     URL_TEMPLATE = "%s{?%s}"
 
     # @example
-    #   hash =  {rel: {link_property: property_name}}
+    #   hash =  {rel: "self", href: "http://example.org"}
     #   Transition.new(hash)
-    #  It must only have one key/vale pair where the value is a hash
-    #  Must contain at least the property :href
+    # Must contain at least the property :href
     # @param [Hash] the abstract representor hash defining a transition
     def initialize(transition_hash)
       @transition_hash = transition_hash
@@ -39,7 +38,10 @@ module Representors
 
     # @return [String] The URI for the object
     def uri
-      retrieve(HREF_KEY)
+      #TODO we are splitting here in case the URL is already templated.  In the
+      # future, this should be replaced with something like Addressable::Template,
+      # as should templated_uri
+      retrieve(HREF_KEY).split('{').first
     end
 
     # @param [String] key on the transitions hash to retrieve
@@ -60,6 +62,7 @@ module Representors
       @templated_uri ||= if parameters.empty?
         uri
       else
+        #TODO replace with something like Addressable::Template
         URL_TEMPLATE % [uri, parameters.map { |p| p.name }.join(",")]
       end
     end
@@ -71,7 +74,7 @@ module Representors
     # @return [Array] who's elements are all <Crichton:Transition> objects
     def meta_links
       meta_links ||= (retrieve(LINKS_KEY) || []).map do |link_key, link_href|
-        Transition.new( { link_key => { href: link_href } } )
+        Transition.new({rel: link_key, href: link_href})
       end
     end
 
@@ -99,11 +102,6 @@ module Representors
     # @return [Array] who's elements are all <Crichton:Field> objects
     def descriptors
       @descriptions ||= (attributes + parameters)
-    end
-
-
-    def data
-      retrieve('data') || {}
     end
 
     private

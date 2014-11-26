@@ -1,0 +1,141 @@
+{
+    "_meta": {
+        "shot_base": {
+            "type": "integer:range",
+            "min": 0,
+            "max": 16
+        },
+        "order_properties": {
+            "drink_type": {
+                "options": {
+                    "_ref": [
+                        {
+                            "href": "www.example.com/hq/menu",
+                            "type": "application/xml",
+                            "target": "/menu/menuitem[current=true]/item_name[text()]"
+                        }
+                    ]
+                },
+                "in": true,
+                "required": true
+            },
+            "iced": {
+                "type": "boolean",
+                "value": false
+            },
+            "size": {
+                "type": "integer:number",
+                "options": [
+                    {
+                        "small": 8
+                    },
+                    {
+                        "medium": 12
+                    },
+                    {
+                        "large": 16
+                    },
+                    {
+                        "extra-large": 20
+                    }
+                ],
+                "in": true,
+                "required": true
+            },
+            "shots": {
+                "_ref": [
+                    "shot_base"
+                ]
+            },
+            "decaf": {
+                "_ref": [
+                    "shot_base"
+                ],
+                "lte": {
+                    "profile": "profiles.example.com/lte/",
+                    "attribute": "shots"
+                }
+            }
+        }
+    },
+    "_links": {
+        "self": {
+            "href": "www.example.com/coffeebucks/"
+        },
+        "profile": {
+            "href": "profiles.example.com/coffeebucks/",
+            "enctype": [
+                "application/alps+xml",
+                "text/html"
+            ]
+        },
+        "orders": {
+            "href": "www.example.com/coffeebucks{?order_status,page}",
+            "data": {
+                "order_status": {
+                    "scope": "href",
+                    "options": [
+                        "pending_payment",
+                        "preparing",
+                        "fulfilled"
+                    ],
+                    "in": true,
+                    "multi": true
+                },
+                "page": {
+                    "type": "integer",
+                    "min": 1,
+                    "max": 2,
+                    "value": 1
+                }
+            }
+        },
+        "next": {
+            "href": "www.example.com/coffeebucks?page=2"
+        },
+        "place_order": {
+            "href": "www.example.com/coffeebucks/orders",
+            "method": "POST",
+            "data": {
+                "_ref": [
+                    "order_properties"
+                ]
+            },
+            "multi_order": {
+                "href": "www.example.com/coffeebucks/orders",
+                "request_encoding": "application/json",
+                "method": "POST",
+                "data": {
+                    "multi_order": {
+                        "value": true
+                    },
+                    "orders": {
+                        "type": "object",
+                        "multi": "true",
+                        "data": {
+                            "_ref": [
+                                "order_properties"
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "order_list": [
+            {
+                "href": "www.example.com/coffeebucks/1",
+                "render": "embed"
+            },
+            {
+                "href": "www.example.com/coffeebucks/2",
+                "render": "embed"
+            },
+            {
+                "href": "www.example.com/coffeebucks/3",
+                "render": "embed"
+            }
+        ]
+    },
+    "count": 3,
+    "total_count": 6
+}

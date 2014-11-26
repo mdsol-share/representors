@@ -21,64 +21,58 @@ module Representors
     # TODO: make this private
     def to_representor_hash
       media = @target.is_a?(Hash) ? @target : JSON.parse(@target)
-      builder = RepresentorBuilder.new
-      builder_add_from_deserialized!(builder, media)
-      builder.to_representor_hash
+      builder_add_from_deserialized(RepresentorBuilder.new, media).to_representor_hash
     end
 
     private
 
-    def builder_add_from_deserialized!(builder, media)
-      deserialize_properties!(builder, media)
-      deserialize_links!(builder, media)
-      deserialize_embedded!(builder, media)
+    def builder_add_from_deserialized(builder, media)
+      builder = deserialize_properties(builder, media)
+      builder = deserialize_links(builder, media)
+      builder = deserialize_embedded(builder, media)
     end
 
     # Properties are normal JSON keys in the HAL document. Create properties in the resulting object
-    def deserialize_properties!(builder, media)
-      media.keys.each do |property_name|
-        # links and embedded are not properties but keywords of HAL, skipping them.
-        unless (RESERVED_KEYS.include?(property_name))
-          builder.add_attribute(property_name, media[property_name])
-        end
+    def deserialize_properties(builder, media)
+      media.each do |k,v|
+        builder = builder.add_attribute(k, v) unless (RESERVED_KEYS.include?(k))
       end
+      builder
     end
 
     # links are under '_links' in the original document. Links always have a key (its name) but
     # the value can be a hash with its properties or an array with several links.
-    def deserialize_links!(builder, media)
+    def deserialize_links(builder, media)
       links = media[LINKS_KEY] || {}
-      links.each do |link_rel, link_values|
+
+      links.each do |link_rel,link_values|
         raise(DeserializationError, 'CURIE support not implemented for HAL') if link_rel.eql?(CURIE_KEY)
         if link_values.is_a?(Array)
           if link_values.map{|link| link[HREF]}.any?(&:nil?)
             raise DeserializationError, 'All links must contain the href attribute'
           end
-          builder.add_transition_array(link_rel, link_values)
+          builder = builder.add_transition_array(link_rel, link_values)
         else
-          href = link_values.delete(HREF)
+          href = link_values[HREF]
           raise DeserializationError, 'All links must contain the href attribute' unless href
-          builder.add_transition(link_rel, href, link_values )
+          builder = builder.add_transition(link_rel, href, link_values )
         end
       end
+
+      builder
     end
 
     # embedded resources are under '_embedded' in the original document, similarly to links they can
     # contain an array or a single embedded resource. An embedded resource is a full document so
     # we create a new HalDeserializer for each.
-    def deserialize_embedded!(builder, media)
-      embedded = media[EMBEDDED_KEY] || {}
-      embedded.each do |name, value|
-        if value.is_a?(Array)
-          resources = value.map do |one_embedded_resource|
-            HalDeserializer.new(one_embedded_resource).to_representor_hash
-          end
-          builder.add_embedded(name, resources)
-        else
-          resource_hash = HalDeserializer.new(value).to_representor_hash
-          builder.add_embedded(name, resource_hash)
-        end
+    def deserialize_embedded(builder, media)
+      make_embedded_resource = ->(x) { self.class.new(x).to_representor_hash.to_h }
+      (media[EMBEDDED_KEY] || {}).each do |name, value|
+        resource_hash = map_or_apply(make_embedded_resource, value)
+        builder = builder.add_embedded(name, resource_hash)
       end
+      builder
     end
+
   end
 end
