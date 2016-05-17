@@ -1,3 +1,10 @@
+# Deprecated
+
+This gem's repository now lives at https://github.com/mdsol/representors
+
+Please submit pull requests there.
+
+
 # Crichton Representors
 [![Build Status](https://travis-ci.org/mdsol/crichton-representors.svg)](https://travis-ci.org/mdsol/crichton-representors)
 [Crichton][] Representors is a library to simplify Hypermedia message representation. It has the knowledge of Hypermedia
